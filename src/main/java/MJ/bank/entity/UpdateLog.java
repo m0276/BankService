@@ -12,14 +12,14 @@ public class UpdateLog {
   Long id;
 
   UpdateType updateType;
-  UUID employeeId;
+  Long employeeId;
   Object prevContent;
   Object currContent;
   String memo;
   String ip;
   LocalDateTime updateTime;
 
-  public UpdateLog(UpdateType updateType, UUID employeeId, Object prevContent, Object currContent,
+  public UpdateLog(UpdateType updateType, Long employeeId, Object prevContent, Object currContent,
       String memo, String ip, LocalDateTime updateTime) {
     this.updateType = updateType;
     this.employeeId = employeeId;

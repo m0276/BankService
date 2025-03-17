@@ -9,12 +9,16 @@ import MJ.bank.dto.response.ErrorResponse;
 import MJ.bank.entity.Employee;
 import MJ.bank.entity.EmployeeStatus;
 import MJ.bank.entity.Rank;
+import MJ.bank.entity.UpdateLog;
+import MJ.bank.entity.UpdateType;
 import MJ.bank.mapper.EmployeeMapper;
 import MJ.bank.repository.EmployeeRepository;
 import MJ.bank.repository.PartRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -31,6 +35,7 @@ public class EmployeeService {
   private final EmployeeMapper employeeMapper;
   private final CheckNullField checkNullField;
   private final ProfileService profileService;
+  private final UpdateLogService updateLogService;
 
   public ResponseEntity<?> create(EmployeeCreateRequest createRequest){
     if(checkNullField.hasNullFields(createRequest).hasBody()) return checkNullField.hasNullFields(createRequest);
@@ -51,6 +56,7 @@ public class EmployeeService {
 
     profileService.save(employee.getId());
     employeeRepository.save(employee);
+    updateLogService.save(employee.getId(), UpdateType.Add,null,createRequest, createRequest.memo());
 
     return ResponseEntity.status(HttpStatus.CREATED).body(employeeMapper.toDto(employee));
   }
@@ -66,22 +72,39 @@ public class EmployeeService {
     Rank rank = updateRequest.rank();
     LocalDate joining = updateRequest.dateOfJoining();
 
+
     Employee employee = employeeRepository.findById(id).get();
-    if(newEmail != null) employee.setEmail(newEmail);
-    if(newName != null) employee.setName(newName);
+    if(newEmail != null) {
+      updateLogService.save(employee.getId(), UpdateType.Update,employee.getEmail(),updateRequest.email(), updateRequest.memo());
+      employee.setEmail(newEmail);
+    }
+
+    if(newName != null) {
+      updateLogService.save(employee.getId(), UpdateType.Update,employee.getName(),updateRequest.name(), updateRequest.memo());
+      employee.setName(newName);
+    }
+
     if(partName != null){
       if(partService.findPart(partName) == null) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
             new ErrorResponse(LocalDateTime.now(),HttpStatus.NOT_FOUND.value(), "잘못된 요청입니다.",
                 partName+"을/를 찾을 수 없습니다."));
       }
+      updateLogService.save(employee.getId(), UpdateType.Update,employee.getPart().getPartName(),updateRequest.partName(), updateRequest.memo());
+
       employee.setPart(partService.findPart(partName));
     }
-    if(rank != null) employee.setRank(rank);
-    if(joining != null) employee.setDateOfJoining(joining);
+
+    if(rank != null) {
+      updateLogService.save(employee.getId(), UpdateType.Update,employee.getRank(),updateRequest.rank(), updateRequest.memo());
+      employee.setRank(rank);
+    }
+    if(joining != null) {
+      updateLogService.save(employee.getId(), UpdateType.Update,employee.getDateOfJoining(),updateRequest.dateOfJoining(), updateRequest.memo());
+      employee.setDateOfJoining(joining);
+    }
 
     profileService.update(id);
-
     employeeRepository.save(employee);
 
     return ResponseEntity.status(HttpStatus.OK).body(employeeMapper.toDto(employee));
@@ -92,9 +115,9 @@ public class EmployeeService {
         new ErrorResponse(LocalDateTime.now(),HttpStatus.NOT_FOUND.value(), "잘못된 요청입니다.",
             "존재하지 않는 직원입니다."));
 
-    if(employeeRepository.findById(id).get().getProfile() != null){
-      profileService.delete(id);
-    }
+
+    profileService.delete(id);
+    updateLogService.save(id, UpdateType.Delete,employeeRepository.findById(id),null,"직원 삭제");
     employeeRepository.deleteById(id);
 
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

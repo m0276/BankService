@@ -8,7 +8,8 @@ public record EmployeeUpdateRequest(
     String name,
     String partName,
     Rank rank,
-    LocalDate dateOfJoining
+    LocalDate dateOfJoining,
+    String memo
 ) {
 
 
