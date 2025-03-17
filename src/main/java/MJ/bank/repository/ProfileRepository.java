@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ProfileRepository extends JpaRepository<Profile, Long> {
 
-  void deleteByEmployeeEmail(String employeeEmail);
+  void deleteByEmployeeId(Long employeeId);
 
-  Optional<Profile> findByEmployeeEmail(String employeeEmail);
+  Optional<Profile> findByEmployeeId(Long employeeId);
 }

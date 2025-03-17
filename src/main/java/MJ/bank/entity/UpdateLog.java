@@ -1,0 +1,36 @@
+package MJ.bank.entity;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+public class UpdateLog {
+
+  @Id
+  Long id;
+
+  UpdateType updateType;
+  UUID employeeId;
+  Object prevContent;
+  Object currContent;
+  String memo;
+  String ip;
+  LocalDateTime updateTime;
+
+  public UpdateLog(UpdateType updateType, UUID employeeId, Object prevContent, Object currContent,
+      String memo, String ip, LocalDateTime updateTime) {
+    this.updateType = updateType;
+    this.employeeId = employeeId;
+    this.prevContent = prevContent;
+    this.currContent = currContent;
+    this.memo = memo;
+    this.ip = ip;
+    this.updateTime = updateTime;
+  }
+
+  public UpdateLog(){
+
+  }
+}

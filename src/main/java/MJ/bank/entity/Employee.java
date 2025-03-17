@@ -20,6 +20,8 @@ import org.hibernate.type.SqlTypes;
 @Setter
 public class Employee {
   @Id
+  Long id;
+
   String email;
   String name;
 

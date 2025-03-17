@@ -11,12 +11,11 @@ import lombok.Setter;
 public class Profile {
     @Id
     Long id;
-    String employeeEmail;
+    Long employeeId;
     String imageUrl;
 
-    public Profile(String employeeEmail, String imageUrl) {
-        this.employeeEmail = employeeEmail;
-        this.imageUrl = imageUrl;
+    public Profile(Long employeeId) {
+        this.employeeId = employeeId;
     }
 
     public Profile() {

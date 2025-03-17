@@ -8,10 +8,7 @@ public record EmployeeUpdateRequest(
     String name,
     String partName,
     Rank rank,
-    LocalDate dateOfJoining,
-    Boolean checkProfile,
-    String newEmail,
-    String newUrl
+    LocalDate dateOfJoining
 ) {
 
 

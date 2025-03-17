@@ -7,6 +7,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+
+//profile image를 어떻게 저장할것인지?
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -14,22 +16,21 @@ public class ProfileService {
 
   private final ProfileRepository profileRepository;
 
-  public void save(String email, String url){
-    Profile profile = new Profile(email,url);
+  public void save(Long id){
+    Profile profile = new Profile(id);
     profileRepository.save(profile);
   }
 
-  public void delete(String email){
-    profileRepository.deleteByEmployeeEmail(email);
+  public void delete(Long id){
+    profileRepository.deleteByEmployeeId(id);
   }
 
-  public void update(String email, String url){
+  public void update(Long id){
     Profile profile;
-    if(profileRepository.findByEmployeeEmail(email).isEmpty()){
-      profile = new Profile(email,url);
+    if(profileRepository.findByEmployeeId(id).isEmpty()){
+      profile = new Profile(id);
     }
-    else profile = profileRepository.findByEmployeeEmail(email).get();
-    profile.setImageUrl(url);
+    else profile = profileRepository.findByEmployeeId(id).get();
 
     profileRepository.save(profile);
   }

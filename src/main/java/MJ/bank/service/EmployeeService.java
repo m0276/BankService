@@ -37,7 +37,7 @@ public class EmployeeService {
 
     if(employeeRepository.findByEmail(createRequest.email()).isPresent()){
       return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(LocalDateTime.now(),HttpStatus.CONFLICT.value(), "잘못된 요청입니다.",
-          createRequest.email()) +"은 이미 등록되어 있습니다.");
+          createRequest.email()) +"은 이미 등록되어 있는 이메일입니다.");
     }
 
     if(partService.findPart(createRequest.partName()) == null){
@@ -49,24 +49,24 @@ public class EmployeeService {
     Employee employee = new Employee(createRequest.email(), createRequest.name(),partService.findPart(
         createRequest.partName()) ,createRequest.rank(),createRequest.dateOfJoining());
 
-    if(createRequest.checkProfile()) profileService.save(createRequest.email(),createRequest.url());
+    profileService.save(employee.getId());
     employeeRepository.save(employee);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(employeeMapper.toDto(employee));
   }
 
-  public ResponseEntity<?> update(EmployeeUpdateRequest updateRequest){
-    if(employeeRepository.findByEmail(updateRequest.email()).isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+  public ResponseEntity<?> update(EmployeeUpdateRequest updateRequest, Long id){
+    if(employeeRepository.findById(id).isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
         new ErrorResponse(LocalDateTime.now(),HttpStatus.NOT_FOUND.value(), "잘못된 요청입니다.",
             updateRequest.email()+"을/를 찾을 수 없습니다."));
 
-    String newEmail = updateRequest.newEmail();
+    String newEmail = updateRequest.email();
     String newName = updateRequest.name();
     String partName = updateRequest.partName();
     Rank rank = updateRequest.rank();
     LocalDate joining = updateRequest.dateOfJoining();
 
-    Employee employee = employeeRepository.findByEmail(updateRequest.email()).get();
+    Employee employee = employeeRepository.findById(id).get();
     if(newEmail != null) employee.setEmail(newEmail);
     if(newName != null) employee.setName(newName);
     if(partName != null){
@@ -80,32 +80,31 @@ public class EmployeeService {
     if(rank != null) employee.setRank(rank);
     if(joining != null) employee.setDateOfJoining(joining);
 
-    if(updateRequest.checkProfile()) profileService.update(updateRequest.email(),
-        updateRequest.newUrl());
+    profileService.update(id);
 
     employeeRepository.save(employee);
 
     return ResponseEntity.status(HttpStatus.OK).body(employeeMapper.toDto(employee));
   }
 
-  public ResponseEntity<?> delete(String email){
-    if(employeeRepository.findByEmail(email).isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+  public ResponseEntity<?> delete(Long id){
+    if(employeeRepository.findById(id).isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
         new ErrorResponse(LocalDateTime.now(),HttpStatus.NOT_FOUND.value(), "잘못된 요청입니다.",
-            email+"을/를 찾을 수 없습니다."));
+            "존재하지 않는 직원입니다."));
 
-    if(employeeRepository.findByEmail(email).get().getProfile() != null){
-      profileService.delete(email);
+    if(employeeRepository.findById(id).get().getProfile() != null){
+      profileService.delete(id);
     }
-    employeeRepository.deleteByEmail(email);
+    employeeRepository.deleteById(id);
 
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
-  public Object findInfo(String email){
-    if(employeeRepository.findByEmail(email).isEmpty()) return new ErrorResponse(LocalDateTime.now(),HttpStatus.NOT_FOUND.value(), "잘못된 요청입니다.",
-            email+"을/를 찾을 수 없습니다.");
+  public Object findInfo(Long id){
+    if(employeeRepository.findById(id).isEmpty()) return new ErrorResponse(LocalDateTime.now(),HttpStatus.NOT_FOUND.value(), "잘못된 요청입니다.",
+            "해당 직원을 찾을 수 없습니다.");
 
-    return employeeMapper.toDto(employeeRepository.findByEmail(email).get());
+    return employeeMapper.toDto(employeeRepository.findById(id).get());
   }
 
 
