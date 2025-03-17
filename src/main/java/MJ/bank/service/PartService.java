@@ -1,6 +1,7 @@
 package MJ.bank.service;
 
 
+import MJ.bank.CheckNullField;
 import MJ.bank.dto.PartDto;
 import MJ.bank.dto.request.PartCreateRequest;
 import MJ.bank.dto.request.PartUpdateRequest;
@@ -26,16 +27,15 @@ public class PartService {
 
   private final PartRepository partRepository;
   private final PartMapper partMapper;
+  private final CheckNullField checkNullField;
 
   public ResponseEntity<?> creat(PartCreateRequest createRequest){
-    if(hasNullFields(createRequest)){
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(LocalDateTime.now(),HttpStatus.BAD_REQUEST.value(), "잘못된 요청입니다.",checkNullField(createRequest)+"는 필수입니다."));
-    }
+    if(checkNullField.hasNullFields(createRequest).hasBody()) return checkNullField.hasNullFields(createRequest);
 
     Part part = new Part(createRequest.partName(),createRequest.explanation(),createRequest.establish());
     partRepository.save(part);
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(part);
+    return ResponseEntity.status(HttpStatus.CREATED).body(partMapper.toDto(part));
   }
 
   public Object update(PartUpdateRequest updateRequest){
@@ -93,33 +93,10 @@ public class PartService {
     return result;
   }
 
-  private boolean hasNullFields(Object obj) {
-    for (Field field : obj.getClass().getDeclaredFields()) {
-      field.setAccessible(true);
-      try {
-        if (field.get(obj) == null) {
-          return true;
-        }
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      }
-    }
-    return false;
-  }
+  Part findPart(String partName){
+    if(partRepository.findByPartName(partName).isEmpty()) return null;
 
-  private String checkNullField(Object obj){
-    for(Field field : obj.getClass().getDeclaredFields()){
-      field.setAccessible(true);
-      try {
-        if (field.get(obj) == null) {
-          return field.getName();
-        }
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      }
-    }
-
-    return null;
+    return partRepository.findByPartName(partName).get();
   }
 
 }

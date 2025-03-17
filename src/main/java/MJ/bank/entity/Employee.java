@@ -4,25 +4,31 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 @Entity
+@Getter
+@Setter
 public class Employee {
   @Id
   String email;
   String name;
 
   @ManyToOne
-  @Enumerated(EnumType.STRING)
-  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  //@JoinColumn("part_name")
   Part part;
 
-  UUID employeeNumber;
+  @Setter(AccessLevel.NONE)
+  UUID employeeNumber = UUID.randomUUID();
 
   @Enumerated(EnumType.STRING)
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
@@ -36,16 +42,12 @@ public class Employee {
   @OneToOne
   Profile profile;
 
-  public Employee(String email, String name, Part part, UUID employeeNumber, Rank rank,
-      LocalDate dateOfJoining, EmployeeStatus status, Profile profile) {
+  public Employee(String email, String name, Part part, Rank rank, LocalDate dateOfJoining) {
     this.email = email;
     this.name = name;
     this.part = part;
-    this.employeeNumber = employeeNumber;
     this.rank = rank;
     this.dateOfJoining = dateOfJoining;
-    this.status = status;
-    this.profile = profile;
   }
 
   public Employee() {
