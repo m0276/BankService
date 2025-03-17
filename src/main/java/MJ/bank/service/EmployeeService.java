@@ -30,6 +30,7 @@ public class EmployeeService {
   private final PartService partService;
   private final EmployeeMapper employeeMapper;
   private final CheckNullField checkNullField;
+  private final ProfileService profileService;
 
   public ResponseEntity<?> create(EmployeeCreateRequest createRequest){
     if(checkNullField.hasNullFields(createRequest).hasBody()) return checkNullField.hasNullFields(createRequest);
@@ -48,6 +49,7 @@ public class EmployeeService {
     Employee employee = new Employee(createRequest.email(), createRequest.name(),partService.findPart(
         createRequest.partName()) ,createRequest.rank(),createRequest.dateOfJoining());
 
+    if(createRequest.checkProfile()) profileService.save(createRequest.email(),createRequest.url());
     employeeRepository.save(employee);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(employeeMapper.toDto(employee));
@@ -78,6 +80,9 @@ public class EmployeeService {
     if(rank != null) employee.setRank(rank);
     if(joining != null) employee.setDateOfJoining(joining);
 
+    if(updateRequest.checkProfile()) profileService.update(updateRequest.email(),
+        updateRequest.newUrl());
+
     employeeRepository.save(employee);
 
     return ResponseEntity.status(HttpStatus.OK).body(employeeMapper.toDto(employee));
@@ -88,6 +93,9 @@ public class EmployeeService {
         new ErrorResponse(LocalDateTime.now(),HttpStatus.NOT_FOUND.value(), "잘못된 요청입니다.",
             email+"을/를 찾을 수 없습니다."));
 
+    if(employeeRepository.findByEmail(email).get().getProfile() != null){
+      profileService.delete(email);
+    }
     employeeRepository.deleteByEmail(email);
 
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

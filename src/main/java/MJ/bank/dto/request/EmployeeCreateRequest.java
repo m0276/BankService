@@ -10,7 +10,8 @@ public record EmployeeCreateRequest(
     String partName,
     Rank rank,
     LocalDate dateOfJoining,
-    Boolean checkProfile
+    Boolean checkProfile,
+    String url
 ) {
 
 
