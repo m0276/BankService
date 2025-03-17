@@ -7,6 +7,6 @@ import jakarta.persistence.Id;
 public class Profile {
     @Id
     Long id;
-
+    String employeeEmail;
     String imageUrl;
 }
