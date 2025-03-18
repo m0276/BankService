@@ -1,28 +1,31 @@
 package MJ.bank.storage;
 
-import MJ.bank.entity.Backup;
+import MJ.bank.entity.BackupLog;
 import MJ.bank.entity.BackupStatus;
+import MJ.bank.repository.BackupLogRepository;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class BackupStorage {
   private final String path = "C:\\Users\\user\\IdeaProjects\\study\\bank\\src\\main\\resources";
   DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+  private final BackupLogRepository backupLogRepository;
+
   public void creatCSV(String title,String worker, LocalDateTime start, BackupStatus backupStatus){
+    Long fileNumber = Long.parseLong(title.substring(5));
+
     try{
 
       BufferedWriter fw = new BufferedWriter(new FileWriter(path + title + ".csv",true));
@@ -32,12 +35,20 @@ public class BackupStorage {
       fw.flush();
       fw.close();
 
+      BackupLog backup = new BackupLog(worker,start,LocalDateTime.now(),BackupStatus.Complete,fileNumber);
+
+      backupLogRepository.save(backup);
+
     } catch (IOException e){
         backupStatus = BackupStatus.Fail;
         try (BufferedWriter fw = new BufferedWriter(new FileWriter(path + title + ".csv", true))) {
           fw.write(worker + "," + start.format(formatter) + "," + LocalDateTime.now().format(formatter) + "," + backupStatus);
           fw.newLine();
           fw.flush();
+          fw.close();
+          BackupLog backup = new BackupLog(worker,start,LocalDateTime.now(),BackupStatus.Fail,fileNumber);
+
+          backupLogRepository.save(backup);
         } catch (IOException ex) {
           ex.printStackTrace();
         }

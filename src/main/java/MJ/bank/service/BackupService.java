@@ -1,8 +1,12 @@
 package MJ.bank.service;
 
 
-import MJ.bank.entity.Backup;
+import MJ.bank.dto.BackupDto;
+import MJ.bank.dto.response.ErrorResponse;
+import MJ.bank.entity.BackupLog;
 import MJ.bank.entity.BackupStatus;
+import MJ.bank.mapper.BackupLogMapper;
+import MJ.bank.repository.BackupLogRepository;
 import MJ.bank.storage.BackupStorage;
 import jakarta.transaction.Transactional;
 import java.net.InetAddress;
@@ -11,8 +15,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +41,10 @@ public class BackupService {
 
   private Integer previousRowCount;
   private final BackupStorage backupStorage;
+  private final BackupLogRepository backupLogRepository;
+  private final BackupLogMapper mapper;
+
+  Long backupFileNumber = 1L;
 
   @Scheduled
   public void run(){
@@ -44,13 +57,13 @@ public class BackupService {
           int currentRowCount = rs.getInt(1);
           if (currentRowCount > previousRowCount) {
 
-            backupStorage.creatCSV("Backup","System", LocalDateTime.now(),
+            backupStorage.creatCSV("Backup" + backupFileNumber,"System", LocalDateTime.now(),
                  BackupStatus.Processing);
 
           }
           else{
 
-            backupStorage.creatCSV("Backup","System", LocalDateTime.now(),
+            backupStorage.creatCSV("Backup"+ backupFileNumber,"System", LocalDateTime.now(),
                 BackupStatus.Skip);
           }
           previousRowCount = currentRowCount;
@@ -70,8 +83,9 @@ public class BackupService {
           int currentRowCount = rs.getInt(1);
           if (currentRowCount > previousRowCount) {
 
-            backupStorage.creatCSV("Backup",InetAddress.getLocalHost().getHostAddress(), LocalDateTime.now(),
+            backupStorage.creatCSV("Backup" + backupFileNumber,InetAddress.getLocalHost().getHostAddress(), LocalDateTime.now(),
                 BackupStatus.Processing);
+            backupFileNumber += 1;
           }
           previousRowCount = currentRowCount;
         }
@@ -81,4 +95,18 @@ public class BackupService {
     }
   }
 
+  public ResponseEntity<?> backupList(Long fileNumber){
+    List<BackupLog> list = backupLogRepository.findAll();
+    List<BackupDto> result = new ArrayList<>();
+
+    if(list.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(
+        LocalDateTime.now(),HttpStatus.NOT_FOUND.value(),"잘못된 요청입니다.", "백업 데이터를 찾을 수 없습니다."
+    ));
+
+    for(BackupLog log : list){
+      result.add(mapper.toDto(log));
+    }
+
+    return ResponseEntity.status(HttpStatus.OK).body(result);
+  }
 }
