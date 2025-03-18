@@ -3,7 +3,6 @@ package MJ.bank.service;
 
 import MJ.bank.entity.Backup;
 import MJ.bank.entity.BackupStatus;
-import MJ.bank.repository.BackupRepository;
 import MJ.bank.storage.BackupStorage;
 import jakarta.transaction.Transactional;
 import java.net.InetAddress;
@@ -32,7 +31,6 @@ public class BackupService {
   String PASS;
 
   private Integer previousRowCount;
-  private final BackupRepository backupRepository;
   private final BackupStorage backupStorage;
 
   @Scheduled
