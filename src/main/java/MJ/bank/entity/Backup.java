@@ -16,10 +16,20 @@ public class Backup {
   String worker;
   LocalDateTime startTime;
   LocalDateTime endTime;
-
   @Enumerated(EnumType.STRING)
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   BackupStatus backupStatus;
-  Boolean checkNeedBackup;
 
+
+  public Backup(String worker, LocalDateTime startTime, LocalDateTime endTime,
+      BackupStatus backupStatus) {
+    this.worker = worker;
+    this.startTime = startTime;
+    this.endTime = endTime;
+    this.backupStatus = backupStatus;
+  }
+
+  public Backup() {
+
+  }
 }

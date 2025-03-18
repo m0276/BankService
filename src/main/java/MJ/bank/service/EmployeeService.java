@@ -1,25 +1,18 @@
 package MJ.bank.service;
 
 
-import MJ.bank.CheckNullField;
-import MJ.bank.dto.EmployeeDto;
+import MJ.bank.component.CheckNullField;
 import MJ.bank.dto.request.EmployeeCreateRequest;
 import MJ.bank.dto.request.EmployeeUpdateRequest;
 import MJ.bank.dto.response.ErrorResponse;
 import MJ.bank.entity.Employee;
-import MJ.bank.entity.EmployeeStatus;
 import MJ.bank.entity.Rank;
-import MJ.bank.entity.UpdateLog;
 import MJ.bank.entity.UpdateType;
 import MJ.bank.mapper.EmployeeMapper;
 import MJ.bank.repository.EmployeeRepository;
-import MJ.bank.repository.PartRepository;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

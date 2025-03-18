@@ -3,6 +3,7 @@ package MJ.bank.service;
 
 import MJ.bank.entity.Profile;
 import MJ.bank.repository.ProfileRepository;
+import MJ.bank.storage.ProfileStorage;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class ProfileService {
 
   private final ProfileRepository profileRepository;
+  private final ProfileStorage profileStorage;
 
   public void save(Long id){
     Profile profile = new Profile(id);

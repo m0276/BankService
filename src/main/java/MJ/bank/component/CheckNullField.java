@@ -1,4 +1,4 @@
-package MJ.bank;
+package MJ.bank.component;
 
 import MJ.bank.dto.response.ErrorResponse;
 import java.lang.reflect.Field;

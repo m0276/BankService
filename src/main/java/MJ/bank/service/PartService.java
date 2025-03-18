@@ -1,7 +1,7 @@
 package MJ.bank.service;
 
 
-import MJ.bank.CheckNullField;
+import MJ.bank.component.CheckNullField;
 import MJ.bank.dto.PartDto;
 import MJ.bank.dto.request.PartCreateRequest;
 import MJ.bank.dto.request.PartUpdateRequest;
@@ -10,7 +10,6 @@ import MJ.bank.entity.Part;
 import MJ.bank.mapper.PartMapper;
 import MJ.bank.repository.PartRepository;
 import jakarta.transaction.Transactional;
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
