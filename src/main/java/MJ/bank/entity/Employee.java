@@ -10,6 +10,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.UUID;
 import lombok.AccessLevel;
@@ -21,6 +22,7 @@ import org.hibernate.type.SqlTypes;
 @Entity
 @Getter
 @Setter
+@Table(name = "employee")
 public class Employee {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,7 +35,7 @@ public class Employee {
   String name;
 
   @ManyToOne
-  @JoinColumn(name = "part_id")
+  @JoinColumn(name = "part_name")
   Part part;
 
   @Setter(AccessLevel.NONE)

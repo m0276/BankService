@@ -1,8 +1,10 @@
 package MJ.bank.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Getter;
@@ -11,10 +13,16 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
+@Table(name = "part")
 public class Part {
   @Id
+  @Column(name = "part_name")
   String partName;
+
+  @Column
   String explanation;
+
+  @Column
   LocalDate establish;
 
   @OneToMany(mappedBy = "id")
