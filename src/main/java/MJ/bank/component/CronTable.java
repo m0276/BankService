@@ -21,7 +21,7 @@ public class CronTable {
   public void mainJob() {
     try {
       if (useSchedule) {
-        backupService.run();
+        backupService.backup();
       }
     } catch (Exception e) {
       log.info("* Batch 시스템이 예기치 않게 종료되었습니다. Message: {}", e.getMessage());

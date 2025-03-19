@@ -17,7 +17,6 @@ import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -42,12 +41,12 @@ public class BackupService {
   private Integer previousRowCount;
   private final BackupStorage backupStorage;
   private final BackupLogRepository backupLogRepository;
-  private final BackupLogMapper mapper;
+  private final BackupLogMapper backupLogMapper;
 
   Long backupFileNumber = 1L;
 
-  @Scheduled
-  public void run(){
+  @Scheduled(cron = "0 0 * * * *")
+  public void backup(){
     try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
       String query = "SELECT COUNT(*) FROM update_log";
 
@@ -104,7 +103,7 @@ public class BackupService {
     ));
 
     for(BackupLog log : list){
-      result.add(mapper.toDto(log));
+      result.add(backupLogMapper.toDto(log));
     }
 
     return ResponseEntity.status(HttpStatus.OK).body(result);

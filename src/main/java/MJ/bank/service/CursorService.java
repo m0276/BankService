@@ -1,7 +1,6 @@
 package MJ.bank.service;
 
 
-import MJ.bank.component.CursorResult;
 import MJ.bank.dto.BackupDto;
 import MJ.bank.dto.CursorPageResponseBackupDto;
 import MJ.bank.dto.CursorPageResponseUpdateLogDto;
@@ -12,7 +11,7 @@ import MJ.bank.mapper.BackupLogMapper;
 import MJ.bank.mapper.UpdateLogMapper;
 import MJ.bank.repository.BackupLogRepository;
 import MJ.bank.repository.UpdateLogRepository;
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -38,12 +37,12 @@ public class CursorService {
   }
 
   private List<BackupDto> getBackup(Long id, Pageable page) {
-    List<BackupLog> list;
+    List<BackupLog> list = new ArrayList<>();
     if(id == null){
-      list = backupLogRepository.findAllBy(page);
+      list = backupLogRepository.findAll(page).getContent();
     }
     else{
-      list = backupLogRepository.findByIdOrderBy(id,page);
+      list = backupLogRepository.findAllById(id, page).getContent();
     }
 
     List<BackupDto> result = new ArrayList<>();
@@ -72,16 +71,18 @@ public class CursorService {
   private List<UpdateLogDto> getUpdateLog(Long id, Pageable page) {
     List<UpdateLog> list;
     if(id == null){
-      list = updateLogRepository.findAllByOrderByIpAsc(page);
+      list = updateLogRepository.findAll(page).getContent();
     }
     else{
-      list = updateLogRepository.findByIdLessThanOrderByIpAsc(id,page);
+      list = updateLogRepository.findAllById(id,page).getContent();
     }
 
     List<UpdateLogDto> result = new ArrayList<>();
     for(UpdateLog log : list){
       result.add(updateLogMapper.toDto(log));
     }
+
+    result.sort(Comparator.comparing(UpdateLogDto::updateTime));
 
     return result;
   }

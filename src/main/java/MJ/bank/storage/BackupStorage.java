@@ -3,6 +3,7 @@ package MJ.bank.storage;
 import MJ.bank.entity.BackupLog;
 import MJ.bank.entity.BackupStatus;
 import MJ.bank.repository.BackupLogRepository;
+import jakarta.transaction.Transactional;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
+@Transactional
 @RequiredArgsConstructor
 public class BackupStorage {
   private final String path = "C:\\Users\\user\\IdeaProjects\\study\\bank\\src\\main\\resources";
