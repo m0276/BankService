@@ -14,6 +14,7 @@ import MJ.bank.repository.BackupLogRepository;
 import MJ.bank.repository.UpdateLogRepository;
 import java.awt.print.Pageable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,17 +40,17 @@ public class CursorService {
   private List<BackupDto> getBackup(Long id, Pageable page) {
     List<BackupLog> list;
     if(id == null){
-      list = backupLogRepository.findAllByOrderByStartTimeAsc(page);
+      list = backupLogRepository.findAllBy(page);
     }
     else{
-      list = backupLogRepository.findByIdLessThanOrderByStartTimeAsc(id,page);
+      list = backupLogRepository.findByIdBy(id,page);
     }
 
     List<BackupDto> result = new ArrayList<>();
     for(BackupLog log : list){
       result.add(backupLogMapper.toDto(log));
     }
-
+    result.sort(Comparator.comparing(BackupDto::startedAt));
     return result;
   }
 

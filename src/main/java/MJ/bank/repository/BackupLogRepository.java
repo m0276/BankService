@@ -12,7 +12,7 @@ public interface BackupLogRepository extends JpaRepository<BackupLog, Long> {
 
   Boolean existsByIdLessThan(Long id);
 
-  List<BackupLog> findAllByOrderByStartTimeAsc(Pageable page);
+  List<BackupLog> findAllBy(Pageable page);
 
-  List<BackupLog> findByIdLessThanOrderByStartTimeAsc(Long id, Pageable page);
+  List<BackupLog> findByIdBy(Long id, Pageable page);
 }
