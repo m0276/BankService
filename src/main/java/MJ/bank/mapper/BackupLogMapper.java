@@ -13,6 +13,6 @@ public interface BackupLogMapper {
   @Mapping(source = "backupStatus", target = "status")
   @Mapping(source = "endTime", target = "endedAt")
   @Mapping(source = "startTime", target = "startedAt")
-  public BackupDto toDto(BackupLog backupLog);
+  BackupDto toDto(BackupLog backupLog);
 }
 

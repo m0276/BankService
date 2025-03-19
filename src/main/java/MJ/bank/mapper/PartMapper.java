@@ -7,5 +7,5 @@ import org.mapstruct.Mapper;
 @Mapper(componentModel = "spring")
 public interface PartMapper {
 
-  public PartDto toDto(Part part);
+  PartDto toDto(Part part);
 }

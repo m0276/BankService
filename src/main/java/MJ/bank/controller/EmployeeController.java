@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/employees")
 public class EmployeeController {
 
-  EmployeeService employeeService;
+  private final EmployeeService employeeService;
 
   @PatchMapping("/{id}")
   public ResponseEntity<?> update(@RequestBody EmployeeUpdateRequest updateRequest,@PathVariable Long id){

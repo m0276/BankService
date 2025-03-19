@@ -21,7 +21,7 @@ public class UpdateLogService {
 
   public void save(Long employeeId, String propertyName,UpdateType updateType, Object prevContent, Object currContent, String memo){
     try{
-        UpdateLog updateLog = new UpdateLog(updateType,employeeId,propertyName,prevContent,currContent,memo,
+        UpdateLog updateLog = new UpdateLog(updateType,employeeId,propertyName,prevContent.toString(),currContent.toString(),memo,
             InetAddress.getLocalHost().getHostAddress(),
             LocalDateTime.now());
 

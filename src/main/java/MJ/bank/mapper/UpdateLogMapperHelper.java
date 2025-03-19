@@ -4,6 +4,7 @@ import org.mapstruct.Named;
 import org.springframework.stereotype.Component;
 
 @Component
+@Named("UpdateLogMapperHelper")
 public class UpdateLogMapperHelper {
 
   @Named("LongToString")

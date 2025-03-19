@@ -14,13 +14,13 @@ public interface UpdateLogMapper {
     @Mapping(source = "currContent", target = "currContent", ignore = true)
     @Mapping(source = "prevContent", target = "prevContent", ignore = true)
     @Mapping(source = "employeeId", target = "employeeNumber", qualifiedByName = "LongToString")
-    public UpdateLogDto toDto(UpdateLog updateLog);
+    UpdateLogDto toDto(UpdateLog updateLog);
 
 
     @Mapping(source = "employeeId", target = "employeeNumber", ignore = true)
     @Mapping(source = "memo", target = "memo", ignore = true)
     @Mapping(source = "ip", target = "ip", ignore = true)
     @Mapping(source = "updateTime", target = "updateTime", ignore = true)
-    public UpdateDiffDto toDiffDto(UpdateLog updateLog);
+    UpdateDiffDto toDiffDto(UpdateLog updateLog);
 
 }
