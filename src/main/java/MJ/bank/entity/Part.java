@@ -17,7 +17,7 @@ public class Part {
   String explanation;
   LocalDate establish;
 
-  @OneToMany(mappedBy = "email")
+  @OneToMany(mappedBy = "id")
   List<Employee> employees;
 
   public Part(String partName, String explanation, LocalDate establish) {

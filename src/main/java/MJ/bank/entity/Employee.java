@@ -1,8 +1,11 @@
 package MJ.bank.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -20,28 +23,38 @@ import org.hibernate.type.SqlTypes;
 @Setter
 public class Employee {
   @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   Long id;
 
+  @Column
   String email;
+
+  @Column
   String name;
 
   @ManyToOne
-  //@JoinColumn("part_name")
+  @JoinColumn(name = "part_id")
   Part part;
 
   @Setter(AccessLevel.NONE)
+  @Column(name = "employee_number")
   UUID employeeNumber = UUID.randomUUID();
 
   @Enumerated(EnumType.STRING)
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column
   Rank rank;
+
+  @Column(name = "date_of_joining")
   LocalDate dateOfJoining;
 
   @Enumerated(EnumType.STRING)
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+  @Column
   EmployeeStatus status = EmployeeStatus.Join;
 
   @OneToOne
+  @JoinColumn(name = "profile_id")
   Profile profile;
 
   public Employee(String email, String name, Part part, Rank rank, LocalDate dateOfJoining) {
