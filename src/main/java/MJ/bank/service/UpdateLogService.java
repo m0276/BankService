@@ -19,9 +19,9 @@ import org.springframework.stereotype.Service;
 public class UpdateLogService {
   private final UpdateLogRepository updateLogRepository;
 
-  public void save(Long employeeId, UpdateType updateType, Object prevContent, Object currContent, String memo){
+  public void save(Long employeeId, String propertyName,UpdateType updateType, Object prevContent, Object currContent, String memo){
     try{
-        UpdateLog updateLog = new UpdateLog(updateType,employeeId,prevContent,currContent,memo,
+        UpdateLog updateLog = new UpdateLog(updateType,employeeId,propertyName,prevContent,currContent,memo,
             InetAddress.getLocalHost().getHostAddress(),
             LocalDateTime.now());
 

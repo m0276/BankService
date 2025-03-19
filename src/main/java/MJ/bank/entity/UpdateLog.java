@@ -15,16 +15,18 @@ public class UpdateLog {
 
   UpdateType updateType;
   Long employeeId;
+  String propertyName;
   Object prevContent;
   Object currContent;
   String memo;
   String ip;
   LocalDateTime updateTime;
 
-  public UpdateLog(UpdateType updateType, Long employeeId, Object prevContent, Object currContent,
-      String memo, String ip, LocalDateTime updateTime) {
+  public UpdateLog(UpdateType updateType, Long employeeId, String propertyName, Object prevContent,
+      Object currContent, String memo, String ip, LocalDateTime updateTime) {
     this.updateType = updateType;
     this.employeeId = employeeId;
+    this.propertyName = propertyName;
     this.prevContent = prevContent;
     this.currContent = currContent;
     this.memo = memo;

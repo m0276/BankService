@@ -49,7 +49,7 @@ public class EmployeeService {
 
     profileService.save(employee.getId());
     employeeRepository.save(employee);
-    updateLogService.save(employee.getId(), UpdateType.Add,null,createRequest, createRequest.memo());
+    updateLogService.save(employee.getId(),"새 직원 추가" ,UpdateType.Add,null,createRequest, createRequest.memo());
 
     return ResponseEntity.status(HttpStatus.CREATED).body(employeeMapper.toDto(employee));
   }
@@ -68,12 +68,12 @@ public class EmployeeService {
 
     Employee employee = employeeRepository.findById(id).get();
     if(newEmail != null) {
-      updateLogService.save(employee.getId(), UpdateType.Update,employee.getEmail(),updateRequest.email(), updateRequest.memo());
+      updateLogService.save(employee.getId(),"이메일" ,UpdateType.Update,employee.getEmail(),updateRequest.email(), updateRequest.memo());
       employee.setEmail(newEmail);
     }
 
     if(newName != null) {
-      updateLogService.save(employee.getId(), UpdateType.Update,employee.getName(),updateRequest.name(), updateRequest.memo());
+      updateLogService.save(employee.getId(),"이름" ,UpdateType.Update,employee.getName(),updateRequest.name(), updateRequest.memo());
       employee.setName(newName);
     }
 
@@ -83,17 +83,17 @@ public class EmployeeService {
             new ErrorResponse(LocalDateTime.now(),HttpStatus.NOT_FOUND.value(), "잘못된 요청입니다.",
                 partName+"을/를 찾을 수 없습니다."));
       }
-      updateLogService.save(employee.getId(), UpdateType.Update,employee.getPart().getPartName(),updateRequest.partName(), updateRequest.memo());
+      updateLogService.save(employee.getId(),"부서" ,UpdateType.Update,employee.getPart().getPartName(),updateRequest.partName(), updateRequest.memo());
 
       employee.setPart(partService.findPart(partName));
     }
 
     if(rank != null) {
-      updateLogService.save(employee.getId(), UpdateType.Update,employee.getRank(),updateRequest.rank(), updateRequest.memo());
+      updateLogService.save(employee.getId(),"직함",UpdateType.Update,employee.getRank(),updateRequest.rank(), updateRequest.memo());
       employee.setRank(rank);
     }
     if(joining != null) {
-      updateLogService.save(employee.getId(), UpdateType.Update,employee.getDateOfJoining(),updateRequest.dateOfJoining(), updateRequest.memo());
+      updateLogService.save(employee.getId(),"입사일" ,UpdateType.Update,employee.getDateOfJoining(),updateRequest.dateOfJoining(), updateRequest.memo());
       employee.setDateOfJoining(joining);
     }
 
@@ -110,7 +110,7 @@ public class EmployeeService {
 
 
     profileService.delete(id);
-    updateLogService.save(id, UpdateType.Delete,employeeRepository.findById(id),null,"직원 삭제");
+    updateLogService.save(id,"직원 데이터 삭제",UpdateType.Delete,employeeRepository.findById(id),null,"직원 삭제");
     employeeRepository.deleteById(id);
 
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
