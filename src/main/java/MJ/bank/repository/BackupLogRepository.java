@@ -14,5 +14,5 @@ public interface BackupLogRepository extends JpaRepository<BackupLog, Long> {
 
   List<BackupLog> findAllBy(Pageable page);
 
-  List<BackupLog> findByIdBy(Long id, Pageable page);
+  List<BackupLog> findByIdOrderBy(Long id, Pageable pageable);
 }

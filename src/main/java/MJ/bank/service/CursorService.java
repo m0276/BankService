@@ -43,7 +43,7 @@ public class CursorService {
       list = backupLogRepository.findAllBy(page);
     }
     else{
-      list = backupLogRepository.findByIdBy(id,page);
+      list = backupLogRepository.findByIdOrderBy(id,page);
     }
 
     List<BackupDto> result = new ArrayList<>();
