@@ -23,8 +23,6 @@ public class CronTable {
       if (useSchedule) {
         backupService.run();
       }
-    } catch (InterruptedException e) {
-      log.info("* Thread가 강제 종료되었습니다. Message: {}", e.getMessage());
     } catch (Exception e) {
       log.info("* Batch 시스템이 예기치 않게 종료되었습니다. Message: {}", e.getMessage());
     }

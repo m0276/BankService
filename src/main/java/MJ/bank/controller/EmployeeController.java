@@ -1,4 +1,4 @@
-package MJ.bank.dto.controller;
+package MJ.bank.controller;
 
 
 import MJ.bank.dto.request.EmployeeUpdateRequest;

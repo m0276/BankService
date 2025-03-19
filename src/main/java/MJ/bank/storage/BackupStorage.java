@@ -5,6 +5,7 @@ import MJ.bank.entity.BackupStatus;
 import MJ.bank.repository.BackupLogRepository;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -40,8 +41,21 @@ public class BackupStorage {
       backupLogRepository.save(backup);
 
     } catch (IOException e){
+
+      File file = new File(path + title + ".csv");
+
+      if( file.exists() ){
+        if(file.delete()){
+          System.out.println("파일삭제 성공");
+        }else{
+          System.out.println("파일삭제 실패");
+        }
+      }else{
+        System.out.println("파일이 존재하지 않습니다.");
+      }
+
         backupStatus = BackupStatus.Fail;
-        try (BufferedWriter fw = new BufferedWriter(new FileWriter(path + title + ".csv", true))) {
+        try (BufferedWriter fw = new BufferedWriter(new FileWriter(path + title + ".log", true))) {
           fw.write(worker + "," + start.format(formatter) + "," + LocalDateTime.now().format(formatter) + "," + backupStatus);
           fw.newLine();
           fw.flush();
