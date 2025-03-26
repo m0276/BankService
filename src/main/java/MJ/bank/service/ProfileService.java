@@ -41,7 +41,7 @@ public class ProfileService {
   }
 
   public void delete(Long id){
-    profileRepository.deleteByEmployeeId(id);
+    profileRepository.deleteById(id);
   }
 
   public void update(Long id){

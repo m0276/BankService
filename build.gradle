@@ -51,8 +51,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-//	//javax (complie query dsl에 필요해 추가)
-//	implementation 'javax.persistence:javax.persistence-api:2.2'
 }
 
 tasks.named('test') {
