@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -94,18 +95,16 @@ public class BackupService {
     }
   }
 
-  public ResponseEntity<?> backupList(Long fileNumber){
+  public List<BackupDto> backupList(Long fileNumber){
     List<BackupLog> list = backupLogRepository.findAll();
     List<BackupDto> result = new ArrayList<>();
 
-    if(list.isEmpty()) return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(
-        LocalDateTime.now(),HttpStatus.NOT_FOUND.value(),"잘못된 요청입니다.", "백업 데이터를 찾을 수 없습니다."
-    ));
+    if(list.isEmpty()) throw new NoSuchElementException("백업 데이터를 찾을 수 없습니다.");
 
     for(BackupLog log : list){
       result.add(backupLogMapper.toDto(log));
     }
 
-    return ResponseEntity.status(HttpStatus.OK).body(result);
+    return result;
   }
 }

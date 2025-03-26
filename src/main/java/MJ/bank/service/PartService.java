@@ -9,11 +9,13 @@ import MJ.bank.dto.response.ErrorResponse;
 import MJ.bank.entity.Part;
 import MJ.bank.mapper.PartMapper;
 import MJ.bank.repository.PartRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,18 +30,19 @@ public class PartService {
   private final PartMapper partMapper;
   private final CheckNullField checkNullField;
 
-  public ResponseEntity<?> creat(PartCreateRequest createRequest){
-    if(checkNullField.hasNullFields(createRequest).hasBody()) return checkNullField.hasNullFields(createRequest);
+  public PartDto creat(PartCreateRequest createRequest){
+    if(checkNullField.hasNullFields(createRequest) != null) throw new NullPointerException(
+        checkNullField.hasNullFields(createRequest));
 
     Part part = new Part(createRequest.partName(),createRequest.explanation(),createRequest.establish());
     partRepository.save(part);
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(partMapper.toDto(part));
+    return partMapper.toDto(part);
   }
 
-  public Object update(PartUpdateRequest updateRequest){
+  public PartDto update(PartUpdateRequest updateRequest){
     if(partRepository.findByPartName(updateRequest.partName()).isEmpty()){
-      return new ErrorResponse(LocalDateTime.now(),HttpStatus.BAD_REQUEST.value(), "잘못된 요청입니다.",updateRequest.partName()+"을 찾을 수 없습니다.");
+      throw new NoSuchElementException(updateRequest.partName()+"을/를 찾을 수 없습니다.");
     }
 
     Part part = partRepository.findByPartName(updateRequest.partName()).get();
@@ -51,7 +54,7 @@ public class PartService {
     if(newPartName != null){
       if(partRepository.findByPartName(newPartName).isEmpty()) part.setPartName(newPartName);
       else{
-        return new ErrorResponse(LocalDateTime.now(),HttpStatus.BAD_REQUEST.value(), "잘못된 요청입니다.",updateRequest.newPartName()+"가 이미 존재합니다.");
+        throw new EntityExistsException(newPartName + "은/는 이미 존재합니다.");
       }
     }
 
@@ -64,19 +67,16 @@ public class PartService {
     return partMapper.toDto(part);
   }
 
-  public ResponseEntity<?> delete(String partName){
+  public void delete(String partName){
     if(partRepository.findByPartName(partName).isEmpty()){
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(LocalDateTime.now(),HttpStatus.NOT_FOUND.value(), "잘못된 요청입니다.",partName+"을 찾을 수 없습니다.")
-    );
+      throw new NoSuchElementException(partName+"을/를 찾을 수 없습니다.");
     }
 
     Part part = partRepository.findByPartName(partName).get();
-    if(!part.getEmployees().isEmpty()) return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(new ErrorResponse(LocalDateTime.now(),HttpStatus.PRECONDITION_FAILED.value(), "잘못된 요청입니다.",partName+"에 직원이 존재합니다.")
-    );
+    if(!part.getEmployees().isEmpty()) throw new IllegalArgumentException("해당 부서에 존재하는 직원이 있습니다.");
+      //return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(new ErrorResponse(LocalDateTime.now(),HttpStatus.PRECONDITION_FAILED.value(), "잘못된 요청입니다.",partName+"에 직원이 존재합니다."));
 
     partRepository.delete(part);
-
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
   }
 
   public List<PartDto> findInfo(String finding){

@@ -12,7 +12,10 @@ public class Profile {
     @Id
     Long id;
     Long employeeId;
-    String imageUrl;
+    String fileName;
+    String fileType;
+    Long fileSize;
+
 
     public Profile(Long employeeId) {
         this.employeeId = employeeId;
