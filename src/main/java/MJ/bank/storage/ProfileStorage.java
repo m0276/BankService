@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -42,11 +43,25 @@ public class ProfileStorage {
   }
 
   public Profile saveFile(Profile profile, byte[] fileData) throws IOException {
-    Path filePath = Paths.get(path + profile.getFileName());
-    Files.write(filePath, fileData);
+    Objects.requireNonNull(profile.getFileName(), "File name cannot be null");
 
-    return profileRepository.save(profile);
+    Path dirPath = Paths.get(path);
+    if (!Files.exists(dirPath)) {
+      Files.createDirectories(dirPath);
+    }
+
+    Path filePath = Paths.get(path, profile.getFileName());
+
+    try {
+      Files.write(filePath, fileData);
+
+      return profileRepository.save(profile);
+    } catch (IOException e) {
+
+      throw new IOException("Failed to save file: " + filePath, e);
+    }
   }
+
 
   public Optional<Profile> getFileMeta(Long id) {
     return profileRepository.findById(id);

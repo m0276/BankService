@@ -1,12 +1,11 @@
 package MJ.bank.controller;
 
-
 import MJ.bank.dto.ProfileDto;
 import MJ.bank.dto.request.EmployeeUpdateRequest;
 import MJ.bank.dto.response.ErrorResponse;
-import MJ.bank.entity.Profile;
 import MJ.bank.service.EmployeeService;
 import MJ.bank.service.ProfileService;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
@@ -42,9 +41,17 @@ public class EmployeeController {
   }
 
   @PostMapping("/upload")
-  public String fileUpload(@RequestParam("file") MultipartFile file, @RequestBody ProfileDto profile) {
-    profileService.save(file, profile);
+  public ResponseEntity<?> fileUpload(@RequestParam("file") MultipartFile file) {
+    try{
+      ProfileDto profileDto = profileService.save(file);
+      return ResponseEntity.status(HttpStatus.OK).body(profileDto);
+    }
+    catch (IOException e){
 
-    return "redirect:/";
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+          new ErrorResponse(LocalDateTime.now(),HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류입니다.",
+              "파일을 불러올 수 없습니다.")
+      );
+    }
   }
 }

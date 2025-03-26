@@ -8,18 +8,12 @@ import lombok.Setter;
 @Entity
 @Setter
 @Getter
-public class Profile {
+public class Profile { //메타 데이터
     @Id
     Long id;
-    Long employeeId;
     String fileName;
     String fileType;
     Long fileSize;
-
-
-    public Profile(Long employeeId) {
-        this.employeeId = employeeId;
-    }
 
     public Profile() {
 

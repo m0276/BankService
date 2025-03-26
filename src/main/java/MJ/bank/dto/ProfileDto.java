@@ -1,7 +1,9 @@
 package MJ.bank.dto;
 
 public record ProfileDto(
-    Long employeeId
+    String fileName,
+    String fileType,
+    Long fileSize
 ) {
 
 }

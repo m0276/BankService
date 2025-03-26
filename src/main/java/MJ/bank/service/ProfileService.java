@@ -3,6 +3,7 @@ package MJ.bank.service;
 
 import MJ.bank.dto.ProfileDto;
 import MJ.bank.entity.Profile;
+import MJ.bank.mapper.ProfileMapper;
 import MJ.bank.repository.ProfileRepository;
 import MJ.bank.storage.ProfileStorage;
 import jakarta.transaction.Transactional;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 
-//profile image를 어떻게 저장할것인지?
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -23,22 +23,21 @@ public class ProfileService {
 
   private final ProfileRepository profileRepository;
   private final ProfileStorage profileStorage;
+  private final ProfileMapper mapper;
 
-  public ResponseEntity<?> save(MultipartFile file , ProfileDto dto){
+  public ProfileDto save(MultipartFile file) throws IOException {
 
-    try {
-      Profile profile = new Profile(dto.employeeId());
+
+      Profile profile = new Profile();
       profile.setFileSize(file.getSize());
       profile.setFileName(file.getName());
       profile.setFileType(file.getContentType());
 
       profileStorage.saveFile(profile,file.getBytes());
 
-      return ResponseEntity.status(HttpStatus.CREATED).body(profile);
+      return mapper.toDto(profile);
 
-    } catch (IOException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-    }
+
   }
 
   public void delete(Long id){
@@ -47,10 +46,10 @@ public class ProfileService {
 
   public void update(Long id){
     Profile profile;
-    if(profileRepository.findByEmployeeId(id).isEmpty()){
-      profile = new Profile(id);
+    if(profileRepository.findById(id).isEmpty()){
+      profile = new Profile();
     }
-    else profile = profileRepository.findByEmployeeId(id).get();
+    else profile = profileRepository.findById(id).get();
 
     profileRepository.save(profile);
   }
