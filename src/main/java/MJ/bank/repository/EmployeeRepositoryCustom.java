@@ -8,5 +8,5 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 
 public interface EmployeeRepositoryCustom {
-  Slice<Employee> searchAll(CursorPageRequest request, Pageable page);
+  Slice<?> searchAll(CursorPageRequest request, Pageable page);
 }

@@ -2,6 +2,7 @@ package MJ.bank.repository;
 
 //https://velog.io/@jkijki12/Spring-QueryDSL-%EC%99%84%EB%B2%BD-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0
 
+import MJ.bank.component.MakeSlice;
 import MJ.bank.dto.request.CursorPageRequest;
 import MJ.bank.entity.Employee;
 import MJ.bank.entity.QEmployee;
@@ -26,73 +27,13 @@ import org.springframework.data.domain.SliceImpl;
 @RequiredArgsConstructor
 public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom{
 
-  private final JPAQueryFactory queryFactory;
   QEmployee employee = QEmployee.employee;
+  MakeSlice makeSlice;
 
   // Base sort : id
   @Override
-  public Slice<Employee> searchAll(CursorPageRequest request, Pageable page) {
-    if(noRequest(request)) return new SliceImpl<>(queryFactory.selectFrom(employee).orderBy(sortBy(request.getSortDirection(),request.getSortType())).fetch()
-        ,page,hasNext(request,queryFactory.selectFrom(employee).fetch().size()));
-
-    return new SliceImpl<>(find(request),page,hasNext(request,queryFactory.selectFrom(employee).fetch().size()));
-  }
-
-  private OrderSpecifier<?> sortBy(String direction, String type){
-    PathBuilder<Employee> pathBuilder = new PathBuilder<>(Employee.class, "employee");
-
-    if (type == null) {
-      return direction == null ? employee.id.desc() :
-          direction.equals("desc") ? employee.id.desc() : employee.id.asc();
-    } else {
-      ComparableExpressionBase<?> path = pathBuilder.getComparable(type, Comparable.class);
-
-      return direction == null ? path.desc() :
-          direction.equals("desc") ? path.desc() : path.asc();
-    }
-  }
-
-  private boolean hasNext(CursorPageRequest request, int len){
-    int size = request.getSize() != null ? request.getSize() : 10;
-    return size < len;
-  }
-
-  private boolean noRequest(CursorPageRequest request){
-    for(Field field : request.getClass().getDeclaredFields()){
-      field.setAccessible(true);
-      if(field.getName().equals("direction") || field.getName().equals("type")) continue;
-
-      try {
-        if(field.get(request) != null) return false;
-      } catch (IllegalAccessException e){
-        e.printStackTrace();
-      }
-    }
-
-    return true;
-  }
-
-  private List<Employee> find(CursorPageRequest request) {
-    BooleanBuilder builder = new BooleanBuilder();
-
-    if (request.getId() != null) {
-      builder.and(Expressions.stringOperation(Ops.STRING_CAST, employee.employeeNumber)
-          .like("%" + request.getId().toString() + "%"));
-    }
-    if (request.getPartName() != null) {
-      builder.and(employee.part.partName.like("%" + request.getPartName() + "%"));
-    }
-    if (request.getName() != null) {
-      builder.and(employee.name.like("%" + request.getName() + "%"));
-    }
-    if (request.getRank() != null) {
-      builder.and(employee.rank.stringValue().like("%" + request.getRank().toString() + "%"));
-    }
-    if (request.getStatus() != null) {
-      builder.and(employee.status.stringValue().like("%" + request.getStatus().toString() + "%"));
-    }
-
-    return queryFactory.selectFrom(employee).where(builder).fetch();
+  public Slice<?> searchAll(CursorPageRequest request, Pageable page) {
+    return makeSlice.findAll(request,page,employee);
   }
 
 }

@@ -15,8 +15,8 @@ public class CursorPageRequest {
   String email;
   String partName;
   Rank rank;
-  UUID id;
-  //LocalDate joinDate;
+  UUID employeeId;
+  String description;
   EmployeeStatus status;
   String sortType;
   Integer size;
