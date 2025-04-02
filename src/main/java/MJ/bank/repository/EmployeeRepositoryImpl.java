@@ -23,7 +23,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
+@Component
 @RequiredArgsConstructor
 public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom{
 
@@ -32,10 +35,9 @@ public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom{
 
   // Base sort : id
   @Override
-  public Slice<?> searchAll(CursorPageRequest request, Pageable page) {
-    return makeSlice.findAll(request,page,employee);
+  public Slice<Employee> searchAll(CursorPageRequest request, Pageable page) {
+    return (Slice<Employee>) makeSlice.findAll(request,page,employee);
   }
-
 }
 
 //

@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 public record EmployeeDto(
+    Long id,
     String email,
     String name,
     Part part,

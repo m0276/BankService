@@ -3,12 +3,14 @@ package MJ.bank.service;
 
 import MJ.bank.component.CheckNullField;
 import MJ.bank.dto.PartDto;
+import MJ.bank.dto.request.CursorPageRequest;
 import MJ.bank.dto.request.PartCreateRequest;
 import MJ.bank.dto.request.PartUpdateRequest;
 import MJ.bank.dto.response.ErrorResponse;
 import MJ.bank.entity.Part;
 import MJ.bank.mapper.PartMapper;
 import MJ.bank.repository.PartRepository;
+import MJ.bank.repository.PartRepositoryImpl;
 import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
@@ -17,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,6 +34,7 @@ public class PartService {
   private final PartRepository partRepository;
   private final PartMapper partMapper;
   private final CheckNullField checkNullField;
+  private final PartRepositoryImpl impl;
 
   public PartDto creat(PartCreateRequest createRequest){
     if(checkNullField.hasNullFields(createRequest) != null) throw new NullPointerException(
@@ -96,6 +102,18 @@ public class PartService {
     if(partRepository.findByPartName(partName).isEmpty()) return null;
 
     return partRepository.findByPartName(partName).get();
+  }
+
+  public List<PartDto> getPartList(CursorPageRequest request){
+    Pageable pageable = PageRequest.of(request.getPageNo(), request.getSize(), Sort.by(request.getSortDirection(),
+        request.getSortType()));
+    List<?> list = impl.findAll(request,pageable).getContent();
+    List<PartDto> partDtoList = new ArrayList<>();
+    for(Object o : list){
+      partDtoList.add(partMapper.toDto((Part) o));
+    }
+
+    return partDtoList;
   }
 
 }

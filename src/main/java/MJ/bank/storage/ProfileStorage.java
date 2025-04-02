@@ -76,4 +76,16 @@ public class ProfileStorage {
     return null;
   }
 
+  public void deleteFile(Long id){
+    try{
+      Optional<Profile> profile = getFileMeta(id);
+      if(profile.isPresent()){
+        Path filePath = Paths.get(path + profile.get().getFileName());
+        Files.delete(filePath);
+      }
+    } catch (IOException e){
+      e.printStackTrace();
+    }
+  }
+
 }

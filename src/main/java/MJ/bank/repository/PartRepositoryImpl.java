@@ -10,8 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
+import org.springframework.stereotype.Component;
 
-
+@Component
 @RequiredArgsConstructor
 public class PartRepositoryImpl implements PartRepositoryCustom{
 
