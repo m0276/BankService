@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -74,7 +76,7 @@ public class BackupService {
     }
   }
 
-  public void create(){
+  public boolean create(){
     try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
       String query = "SELECT COUNT(*) FROM update_log";
       try (PreparedStatement pstmt = conn.prepareStatement(query);
@@ -90,21 +92,14 @@ public class BackupService {
           previousRowCount = currentRowCount;
         }
       }
+      return true;
     } catch (Exception e) {
       e.printStackTrace();
+      return false;
     }
   }
 
-  public List<BackupDto> backupList(Long fileNumber){
-    List<BackupLog> list = backupLogRepository.findAll();
-    List<BackupDto> result = new ArrayList<>();
-
-    if(list.isEmpty()) throw new NoSuchElementException("백업 데이터를 찾을 수 없습니다.");
-
-    for(BackupLog log : list){
-      result.add(backupLogMapper.toDto(log));
-    }
-
-    return result;
+  public LocalDateTime lastBackupTime(){
+    return backupLogRepository.findAll(Sort.by(Direction.ASC,"endTime")).getLast().getEndTime();
   }
 }

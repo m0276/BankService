@@ -2,11 +2,15 @@ package MJ.bank.service;
 
 
 import MJ.bank.component.CheckNullField;
+import MJ.bank.dto.BackupDto;
 import MJ.bank.dto.PartDto;
 import MJ.bank.dto.request.CursorPageRequest;
 import MJ.bank.dto.request.PartCreateRequest;
 import MJ.bank.dto.request.PartUpdateRequest;
+import MJ.bank.dto.response.CursorPageResponseBackupDto;
+import MJ.bank.dto.response.CursorPageResponsePartDto;
 import MJ.bank.dto.response.ErrorResponse;
+import MJ.bank.entity.BackupLog;
 import MJ.bank.entity.Part;
 import MJ.bank.mapper.PartMapper;
 import MJ.bank.repository.PartRepository;
@@ -21,6 +25,7 @@ import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +39,6 @@ public class PartService {
   private final PartRepository partRepository;
   private final PartMapper partMapper;
   private final CheckNullField checkNullField;
-  private final PartRepositoryImpl impl;
 
   public PartDto creat(PartCreateRequest createRequest){
     if(checkNullField.hasNullFields(createRequest) != null) throw new NullPointerException(
@@ -104,16 +108,39 @@ public class PartService {
     return partRepository.findByPartName(partName).get();
   }
 
-  public List<PartDto> getPartList(CursorPageRequest request){
-    Pageable pageable = PageRequest.of(request.getPageNo(), request.getSize(), Sort.by(request.getSortDirection(),
-        request.getSortType()));
-    List<?> list = impl.findAll(request,pageable).getContent();
-    List<PartDto> partDtoList = new ArrayList<>();
-    for(Object o : list){
-      partDtoList.add(partMapper.toDto((Part) o));
+  public CursorPageResponsePartDto getParts(CursorPageRequest request, Pageable page) {
+    final List<PartDto> parts = getPart(request, page);
+    final String lastIdOfList = parts.isEmpty() ?
+        null : parts.getLast().partName();
+
+    return new CursorPageResponsePartDto(parts, lastIdOfList
+        ,lastIdOfList,10,(long) parts.size(),hasNextInBackup(lastIdOfList));
+  }
+
+  private List<PartDto> getPart(CursorPageRequest request, Pageable page) {
+    List<PartDto> list = new ArrayList<>();
+    if(request.getCursorId() == null){
+      list = partRepository.searchAll(request,page).getContent();
+    }
+    else{
+      Slice<Part> parts = partRepository.findAllByPartName(request.getPartName(), page);
+      for(Part p : parts){
+        list.add(partMapper.toDto(p));
+      }
     }
 
-    return partDtoList;
+    if(list.isEmpty()) throw  new NoSuchElementException("파트를 찾을 수 없습니다.");
+
+    return list;
+  }
+
+  private Boolean hasNextInBackup(String id) {
+    if (id == null) return false;
+    return partRepository.existsPartByPartName(id);
+  }
+
+  public List<Part> findAll(){
+    return partRepository.findAll();
   }
 
 }

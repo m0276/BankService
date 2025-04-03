@@ -3,9 +3,11 @@ package MJ.bank.service;
 
 import MJ.bank.dto.BackupDto;
 import MJ.bank.dto.EmployeeDto;
+import MJ.bank.dto.PartDto;
 import MJ.bank.dto.request.CursorPageRequest;
 import MJ.bank.dto.response.CursorPageResponseBackupDto;
 import MJ.bank.dto.response.CursorPageResponseEmployeeDto;
+import MJ.bank.dto.response.CursorPageResponsePartDto;
 import MJ.bank.dto.response.CursorPageResponseUpdateLogDto;
 import MJ.bank.dto.UpdateLogDto;
 import MJ.bank.entity.BackupLog;
@@ -16,7 +18,9 @@ import MJ.bank.mapper.EmployeeMapper;
 import MJ.bank.mapper.UpdateLogMapper;
 import MJ.bank.repository.BackupLogRepository;
 import MJ.bank.repository.EmployeeRepository;
+import MJ.bank.repository.PartRepository;
 import MJ.bank.repository.UpdateLogRepository;
+import java.util.NoSuchElementException;
 import org.springframework.data.domain.Pageable;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -53,6 +57,8 @@ public class CursorService {
     else{
       list = backupLogRepository.findAllById(request.getCursorId(), page).getContent();
     }
+
+    if(list.isEmpty()) throw  new NoSuchElementException("백업 데이터를 찾을 수 없습니다.");
 
     List<BackupDto> result = new ArrayList<>();
     for(BackupLog log : list){
@@ -130,6 +136,5 @@ public class CursorService {
     if (id == null) return false;
     return employeeRepository.existsByIdLessThan(id);
   }
-
 
 }

@@ -1,6 +1,7 @@
 package MJ.bank.repository;
 
 import MJ.bank.component.MakeSlice;
+import MJ.bank.dto.PartDto;
 import MJ.bank.dto.request.CursorPageRequest;
 import MJ.bank.entity.Part;
 import MJ.bank.entity.QPart;
@@ -21,8 +22,8 @@ public class PartRepositoryImpl implements PartRepositoryCustom{
   MakeSlice makeSlice;
 
   @Override
-  public Slice<?> findAll(CursorPageRequest request, Pageable pageable) {
-    return makeSlice.findAll(request,pageable,part);
+  public Slice<PartDto> searchAll(CursorPageRequest request, Pageable pageable) {
+    return (Slice<PartDto>) makeSlice.findAll(request,pageable,part);
   }
 
 }

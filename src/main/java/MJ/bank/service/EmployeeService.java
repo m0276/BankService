@@ -8,17 +8,22 @@ import MJ.bank.dto.request.EmployeeCreateRequest;
 import MJ.bank.dto.request.EmployeeUpdateRequest;
 import MJ.bank.dto.response.ErrorResponse;
 import MJ.bank.entity.Employee;
+import MJ.bank.entity.EmployeeStatus;
+import MJ.bank.entity.Part;
 import MJ.bank.entity.Rank;
 import MJ.bank.entity.UpdateType;
 import MJ.bank.mapper.EmployeeMapper;
 import MJ.bank.repository.EmployeeRepository;
 import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
@@ -122,5 +127,54 @@ public class EmployeeService {
     if(employeeRepository.findById(id).isEmpty()) throw new NoSuchElementException("해당 직원을 찾을 수 없습니다.");
 
     return employeeMapper.toDto(employeeRepository.findById(id).get());
+  }
+
+  public Integer getSize(){
+    List<Employee> list = employeeRepository.findAll();
+    int count = 0;
+
+    for(Employee e : list){
+      if(e.getStatus().equals(EmployeeStatus.Join) || e.getStatus().equals(EmployeeStatus.OnLeave)) count++;
+    }
+    return count;
+  }
+
+  public List<Integer> findPart(){
+    List<Part> parts = partService.findAll();
+    List<Employee> employees = employeeRepository.findAll();
+
+    List<Integer> counts = new ArrayList<>();
+
+    for (Part part : parts) {
+      int count = 0;
+      for (Employee employee : employees) {
+        if (part.equals(employee.getPart()) && (
+            employee.getStatus().equals(EmployeeStatus.Join) ||
+                employee.getStatus().equals(EmployeeStatus.OnLeave)))
+          count++;
+      }
+      counts.add(count);
+    }
+
+    return counts;
+  }
+
+  public List<Integer> findRank(){
+    List<Rank> ranks = Stream.of(Rank.values()).toList();
+    List<Employee> employees = employeeRepository.findAll();
+
+    List<Integer> counts = new ArrayList<>();
+
+    for(Rank rank : ranks){
+      int count = 0;
+      for(Employee e : employees){
+        if(e.getRank().equals(rank)  && (
+            e.getStatus().equals(EmployeeStatus.Join) ||
+                e.getStatus().equals(EmployeeStatus.OnLeave))) count++;
+      }
+      counts.add(count);
+    }
+
+    return counts;
   }
 }
