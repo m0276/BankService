@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UpdateLogRepository extends JpaRepository<UpdateLog, Long> {
+public interface UpdateLogRepository extends JpaRepository<UpdateLog, Long>,UpdateLogRepositoryCustom {
 
   Page<UpdateLog> findAll(Pageable page);
 
