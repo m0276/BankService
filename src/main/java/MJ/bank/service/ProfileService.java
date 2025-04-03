@@ -7,7 +7,6 @@ import MJ.bank.mapper.ProfileMapper;
 import MJ.bank.repository.ProfileRepository;
 import MJ.bank.storage.ProfileStorage;
 import jakarta.transaction.Transactional;
-import java.io.IO;
 import java.io.IOException;
 import java.nio.file.Files;
 import lombok.RequiredArgsConstructor;

@@ -7,11 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BackupLogRepository extends JpaRepository<BackupLog, Long> {
+public interface BackupLogRepository extends JpaRepository<BackupLog, Long>,BackupLogRepositoryCustom {
 
   Boolean existsByIdLessThan(Long id);
-
-  Page<BackupLog> findAll(Pageable page);
-
   Page<BackupLog> findAllById(Long id, Pageable page);
 }

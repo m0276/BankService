@@ -37,8 +37,8 @@ public class CursorService {
   private final EmployeeMapper employeeMapper;
 
   //TODO : backup, update log custom repository 생성하고 Impl 작성. sort 삭제
-  public CursorPageResponseBackupDto getBackups(Long cursorId, Pageable page) {
-    final List<BackupDto> backups = getBackup(cursorId, page);
+  public CursorPageResponseBackupDto getBackups(CursorPageRequest request, Pageable page) {
+    final List<BackupDto> backups = getBackup(request, page);
     final Long lastIdOfList = backups.isEmpty() ?
         null : backups.getLast().id();
 
@@ -46,20 +46,20 @@ public class CursorService {
         ,lastIdOfList,10,(long) backups.size(),hasNextInBackup(lastIdOfList));
   }
 
-  private List<BackupDto> getBackup(Long id, Pageable page) {
+  private List<BackupDto> getBackup(CursorPageRequest request, Pageable page) {
     List<BackupLog> list;
-    if(id == null){
-      list = backupLogRepository.findAll(page).getContent();
+    if(request.getCursorId() == null){
+      list = backupLogRepository.searchAll(request,page).getContent();
     }
     else{
-      list = backupLogRepository.findAllById(id, page).getContent();
+      list = backupLogRepository.findAllById(request.getCursorId(), page).getContent();
     }
 
     List<BackupDto> result = new ArrayList<>();
     for(BackupLog log : list){
       result.add(backupLogMapper.toDto(log));
     }
-    result.sort(Comparator.comparing(BackupDto::startedAt)); // 삭제 필요
+
     return result;
   }
 
