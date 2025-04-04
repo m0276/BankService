@@ -48,45 +48,45 @@ public class EmployeeService {
       throw new NullPointerException(checkNullField.hasNullFields(createRequest)+"는 필수입니다.");
     }
 
-    if(employeeRepository.findByEmail(createRequest.email()).isPresent()){
-      throw new EntityExistsException(createRequest.email() +"은 이미 등록되어 있는 이메일입니다.");
+    if(employeeRepository.findByEmail(createRequest.getEmail()).isPresent()){
+      throw new EntityExistsException(createRequest.getEmail() +"은 이미 등록되어 있는 이메일입니다.");
     }
 
-    if(partService.findPart(createRequest.partName()) == null){
-      throw new NoSuchElementException(createRequest.partName()+"을/를 찾을 수 없습니다.");
+    if(partService.findPart(createRequest.getPartName()) == null){
+      throw new NoSuchElementException(createRequest.getPartName()+"을/를 찾을 수 없습니다.");
     }
 
-    Employee employee = new Employee(createRequest.email(), createRequest.name(),partService.findPart(
-        createRequest.partName()) ,createRequest.rank(),createRequest.dateOfJoining());
+    Employee employee = new Employee(createRequest.getEmail(), createRequest.getName(),partService.findPart(
+        createRequest.getPartName()) ,createRequest.getRank(),createRequest.getDateOfJoining());
 
     ProfileDto profileDto = profileService.save(file);
     if(profileDto == null) throw new RuntimeException();
     employeeRepository.save(employee);
-    updateLogService.save(employee.getId(),"직원 추가" ,UpdateType.Add,"",createRequest, createRequest.memo());
+    updateLogService.save(employee.getId(),"직원 추가" ,UpdateType.Add,"",createRequest, createRequest.getMemo());
 
     return employeeMapper.toDto(employee);
   }
 
   public EmployeeDto update(EmployeeUpdateRequest updateRequest, Long id, MultipartFile file){
     if(employeeRepository.findById(id).isEmpty()) {
-      throw new NoSuchElementException(updateRequest.partName()+"을/를 찾을 수 없습니다.");
+      throw new NoSuchElementException(updateRequest.getPartName()+"을/를 찾을 수 없습니다.");
     }
 
-    String newEmail = updateRequest.email();
-    String newName = updateRequest.name();
-    String partName = updateRequest.partName();
-    Rank rank = updateRequest.rank();
-    LocalDate joining = updateRequest.dateOfJoining();
+    String newEmail = updateRequest.getEmail();
+    String newName = updateRequest.getName();
+    String partName = updateRequest.getPartName();
+    Rank rank = updateRequest.getRank();
+    LocalDate joining = updateRequest.getDateOfJoining();
 
 
     Employee employee = employeeRepository.findById(id).get();
     if(newEmail != null) {
-      updateLogService.save(employee.getId(),"이메일" ,UpdateType.Update,employee.getEmail(),updateRequest.email(), updateRequest.memo());
+      updateLogService.save(employee.getId(),"이메일" ,UpdateType.Update,employee.getEmail(),updateRequest.getEmail(), updateRequest.getMemo());
       employee.setEmail(newEmail);
     }
 
     if(newName != null) {
-      updateLogService.save(employee.getId(),"이름" ,UpdateType.Update,employee.getName(),updateRequest.name(), updateRequest.memo());
+      updateLogService.save(employee.getId(),"이름" ,UpdateType.Update,employee.getName(),updateRequest.getName(), updateRequest.getMemo());
       employee.setName(newName);
     }
 
@@ -94,17 +94,17 @@ public class EmployeeService {
       if(partService.findPart(partName) == null) {
         throw new NoSuchElementException(partName+"을/를 찾을 수 없습니다.");
       }
-      updateLogService.save(employee.getId(),"부서" ,UpdateType.Update,employee.getPart().getPartName(),updateRequest.partName(), updateRequest.memo());
+      updateLogService.save(employee.getId(),"부서" ,UpdateType.Update,employee.getPart().getPartName(),updateRequest.getPartName(), updateRequest.getMemo());
 
       employee.setPart(partService.findPart(partName));
     }
 
     if(rank != null) {
-      updateLogService.save(employee.getId(),"직함",UpdateType.Update,employee.getRank(),updateRequest.rank(), updateRequest.memo());
+      updateLogService.save(employee.getId(),"직함",UpdateType.Update,employee.getRank(),updateRequest.getRank(), updateRequest.getMemo());
       employee.setRank(rank);
     }
     if(joining != null) {
-      updateLogService.save(employee.getId(),"입사일" ,UpdateType.Update,employee.getDateOfJoining(),updateRequest.dateOfJoining(), updateRequest.memo());
+      updateLogService.save(employee.getId(),"입사일" ,UpdateType.Update,employee.getDateOfJoining(),updateRequest.getDateOfJoining(), updateRequest.getMemo());
       employee.setDateOfJoining(joining);
     }
 

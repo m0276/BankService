@@ -1,7 +1,5 @@
 package MJ.bank.controller;
 
-import MJ.bank.dto.EmployeeDto;
-import MJ.bank.dto.ProfileDto;
 import MJ.bank.dto.request.CursorPageRequest;
 import MJ.bank.dto.request.EmployeeCreateRequest;
 import MJ.bank.dto.request.EmployeeUpdateRequest;
@@ -9,10 +7,7 @@ import MJ.bank.dto.response.CursorPageResponseEmployeeDto;
 import MJ.bank.dto.response.ErrorResponse;
 import MJ.bank.service.CursorService;
 import MJ.bank.service.EmployeeService;
-import MJ.bank.service.ProfileService;
 import jakarta.persistence.EntityExistsException;
-import java.io.IOException;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,7 +50,7 @@ public class EmployeeController {
     }
   }
 
-  @PatchMapping("/{id}")
+  @PatchMapping(value = "/{id}",consumes = {"multipart/form-data"})
   public ResponseEntity<?> update(@RequestBody EmployeeUpdateRequest updateRequest,@PathVariable Long id,
   @RequestPart MultipartFile file){
     try {
@@ -70,7 +64,7 @@ public class EmployeeController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<?> delete(@PathVariable Long id){
+  public ResponseEntity<?> delete(@PathVariable("id") Long id){
     try{
       employeeService.delete(id);
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -82,7 +76,7 @@ public class EmployeeController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<?> find(@PathVariable Long id){
+  public ResponseEntity<?> find(@PathVariable("id") Long id){
     try{
       return ResponseEntity.status(HttpStatus.OK).body(employeeService.findInfo(id));
     } catch (NoSuchElementException e){

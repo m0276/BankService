@@ -1,7 +1,6 @@
 package MJ.bank.controller;
 
 
-import MJ.bank.dto.PartDto;
 import MJ.bank.dto.request.CursorPageRequest;
 import MJ.bank.dto.request.PartCreateRequest;
 import MJ.bank.dto.request.PartUpdateRequest;
@@ -23,8 +22,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -40,7 +37,7 @@ public class PartController {
       return partService.getParts(request,pageable);
     } catch (Exception e){
       e.printStackTrace();
-      return null;
+      return new CursorPageResponsePartDto(null,null,null,null,null,false);
     }
   }
 
@@ -57,7 +54,7 @@ public class PartController {
     }
   }
 
-  @PatchMapping("{/partName}")
+  @PatchMapping("/{partName}")
   public ResponseEntity<?> update(@RequestBody PartUpdateRequest request){
     try {
       return ResponseEntity.status(HttpStatus.OK).body(partService.update(request));
@@ -70,9 +67,10 @@ public class PartController {
     }
   }
 
-  @DeleteMapping("{/partName}")
+  @DeleteMapping("/{partName}")
   public ResponseEntity<?> delete(@PathVariable String partName){
     try{
+      partService.delete(partName);
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     } catch (NoSuchElementException e){
       return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(

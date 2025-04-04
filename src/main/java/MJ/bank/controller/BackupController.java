@@ -26,8 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class BackupController {
   private final CursorService cursorService;
   private final BackupService backupService;
+
+
   @GetMapping
-  public CursorPageResponseBackupDto get(@ModelAttribute("request")CursorPageRequest request, Pageable pageable){
+  public CursorPageResponseBackupDto get(@ModelAttribute("request") CursorPageRequest request, Pageable pageable){
     try {
       return cursorService.getBackups(request,pageable);
     } catch (NoSuchElementException e){
@@ -37,15 +39,16 @@ public class BackupController {
   }
 
   @PostMapping
-  public ResponseEntity<?> save(@RequestBody BackupDto backupDto){
-    boolean check = backupService.create();
-    if(!check){
-     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
-         new ErrorResponse(LocalDateTime.now(),HttpStatus.INTERNAL_SERVER_ERROR.value(),
-             " 서버 오류입니다.","백업에 실패하였습니다.")
-     );
+  public ResponseEntity<?> save(){
+    try{
+      backupService.create();
+      return ResponseEntity.status(HttpStatus.CREATED).build();
+    } catch (Exception e){
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+          new ErrorResponse(LocalDateTime.now(),HttpStatus.INTERNAL_SERVER_ERROR.value(),
+              "서버 오류입니다.", "예기치 않은 서버 오류로 백업에 실패하였습니다.")
+      );
     }
-    return ResponseEntity.status(HttpStatus.CREATED).build();
   }
 
 }

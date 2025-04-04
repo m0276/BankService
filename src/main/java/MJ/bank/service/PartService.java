@@ -2,33 +2,23 @@ package MJ.bank.service;
 
 
 import MJ.bank.component.CheckNullField;
-import MJ.bank.dto.BackupDto;
 import MJ.bank.dto.PartDto;
 import MJ.bank.dto.request.CursorPageRequest;
 import MJ.bank.dto.request.PartCreateRequest;
 import MJ.bank.dto.request.PartUpdateRequest;
-import MJ.bank.dto.response.CursorPageResponseBackupDto;
 import MJ.bank.dto.response.CursorPageResponsePartDto;
-import MJ.bank.dto.response.ErrorResponse;
-import MJ.bank.entity.BackupLog;
 import MJ.bank.entity.Part;
 import MJ.bank.mapper.PartMapper;
 import MJ.bank.repository.PartRepository;
-import MJ.bank.repository.PartRepositoryImpl;
 import jakarta.persistence.EntityExistsException;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Transactional
@@ -113,6 +103,7 @@ public class PartService {
     final String lastIdOfList = parts.isEmpty() ?
         null : parts.getLast().partName();
 
+
     return new CursorPageResponsePartDto(parts, lastIdOfList
         ,lastIdOfList,10,(long) parts.size(),hasNextInBackup(lastIdOfList));
   }
@@ -129,7 +120,7 @@ public class PartService {
       }
     }
 
-    if(list.isEmpty()) throw  new NoSuchElementException("파트를 찾을 수 없습니다.");
+    //if(list.isEmpty()) throw  new NoSuchElementException("파트를 찾을 수 없습니다.");
 
     return list;
   }

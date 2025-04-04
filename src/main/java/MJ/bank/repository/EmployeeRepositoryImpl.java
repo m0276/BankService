@@ -6,32 +6,17 @@ import MJ.bank.component.MakeSlice;
 import MJ.bank.dto.request.CursorPageRequest;
 import MJ.bank.entity.Employee;
 import MJ.bank.entity.QEmployee;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.ComparableExpressionBase;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.core.types.dsl.StringPath;
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
-@Component
 @RequiredArgsConstructor
 public class EmployeeRepositoryImpl implements EmployeeRepositoryCustom{
 
   QEmployee employee = QEmployee.employee;
-  MakeSlice makeSlice;
+  private final MakeSlice makeSlice;
 
   // Base sort : id
   @Override

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.resource.beans.container.spi.BeanContainer.LifecycleOptions;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -76,7 +77,7 @@ public class BackupService {
     }
   }
 
-  public boolean create(){
+  public void create(){
     try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
       String query = "SELECT COUNT(*) FROM update_log";
       try (PreparedStatement pstmt = conn.prepareStatement(query);
@@ -92,14 +93,15 @@ public class BackupService {
           previousRowCount = currentRowCount;
         }
       }
-      return true;
+
     } catch (Exception e) {
       e.printStackTrace();
-      return false;
+
     }
   }
 
   public LocalDateTime lastBackupTime(){
+    if(backupLogRepository.findAll().isEmpty()) return null;
     return backupLogRepository.findAll(Sort.by(Direction.ASC,"endTime")).getLast().getEndTime();
   }
 }
