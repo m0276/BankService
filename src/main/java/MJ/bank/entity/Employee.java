@@ -1,5 +1,6 @@
 package MJ.bank.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -55,6 +56,7 @@ public class Employee {
 
   @OneToOne
   @JoinColumn(name = "profile_id")
+  @JsonBackReference
   Profile profile;
 
   public Employee(String email, String name, Part part, Rank rank, LocalDate dateOfJoining) {

@@ -1,5 +1,6 @@
 package MJ.bank.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -25,7 +26,8 @@ public class Part {
   @Column
   LocalDate establish;
 
-  @OneToMany(mappedBy = "id")
+  @OneToMany(mappedBy = "part")
+  @JsonIgnore
   List<Employee> employees;
 
   public Part(String partName, String explanation, LocalDate establish) {

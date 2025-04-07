@@ -7,6 +7,7 @@ import MJ.bank.dto.request.CursorPageRequest;
 import MJ.bank.dto.request.PartCreateRequest;
 import MJ.bank.dto.request.PartUpdateRequest;
 import MJ.bank.dto.response.CursorPageResponsePartDto;
+import MJ.bank.entity.Employee;
 import MJ.bank.entity.Part;
 import MJ.bank.mapper.PartMapper;
 import MJ.bank.repository.PartRepository;
@@ -133,5 +134,17 @@ public class PartService {
   public List<Part> findAll(){
     return partRepository.findAll();
   }
+
+//  public void joinEmployee(Employee employee,String partName){
+//    if(partRepository.findByPartName(partName).isEmpty()){
+//      throw new NoSuchElementException(partName+"을/를 찾을 수 없습니다.");
+//    }
+//    Part part = partRepository.findByPartName(partName).get();
+//    List<Employee> list = part.getEmployees();
+//
+//    list.add(employee);
+//    part.setEmployees(list);
+//    partRepository.save(part);
+//  }
 
 }
