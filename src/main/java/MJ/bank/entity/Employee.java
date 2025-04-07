@@ -36,7 +36,7 @@ public class Employee {
   String name;
 
   @ManyToOne
-  @JoinColumn(name = "part_name")
+  @JoinColumn(name = "part_id")
   Part part;
 
   @Setter(AccessLevel.NONE)

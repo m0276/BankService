@@ -75,7 +75,6 @@ public class PartService {
 
     Part part = partRepository.findByPartName(partName).get();
     if(!part.getEmployees().isEmpty()) throw new IllegalArgumentException("해당 부서에 존재하는 직원이 있습니다.");
-      //return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).body(new ErrorResponse(LocalDateTime.now(),HttpStatus.PRECONDITION_FAILED.value(), "잘못된 요청입니다.",partName+"에 직원이 존재합니다."));
 
     partRepository.delete(part);
   }
@@ -93,7 +92,7 @@ public class PartService {
     return result;
   }
 
-  Part findPart(String partName){
+  public Part findPart(String partName){
     if(partRepository.findByPartName(partName).isEmpty()) return null;
 
     return partRepository.findByPartName(partName).get();
@@ -112,7 +111,10 @@ public class PartService {
   private List<PartDto> getPart(CursorPageRequest request, Pageable page) {
     List<PartDto> list = new ArrayList<>();
     if(request.getCursorId() == null){
-      list = partRepository.searchAll(request,page).getContent();
+      List<Part> parts = partRepository.searchAll(request,page).getContent();
+      for(Part p : parts){
+        list.add(partMapper.toDto(p));
+      }
     }
     else{
       Slice<Part> parts = partRepository.findAllByPartName(request.getPartName(), page);
@@ -120,8 +122,6 @@ public class PartService {
         list.add(partMapper.toDto(p));
       }
     }
-
-    //if(list.isEmpty()) throw  new NoSuchElementException("파트를 찾을 수 없습니다.");
 
     return list;
   }
@@ -134,17 +134,5 @@ public class PartService {
   public List<Part> findAll(){
     return partRepository.findAll();
   }
-
-//  public void joinEmployee(Employee employee,String partName){
-//    if(partRepository.findByPartName(partName).isEmpty()){
-//      throw new NoSuchElementException(partName+"을/를 찾을 수 없습니다.");
-//    }
-//    Part part = partRepository.findByPartName(partName).get();
-//    List<Employee> list = part.getEmployees();
-//
-//    list.add(employee);
-//    part.setEmployees(list);
-//    partRepository.save(part);
-//  }
 
 }

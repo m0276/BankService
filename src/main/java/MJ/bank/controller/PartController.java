@@ -68,7 +68,7 @@ public class PartController {
   }
 
   @DeleteMapping("/{partName}")
-  public ResponseEntity<?> delete(@PathVariable String partName){
+  public ResponseEntity<?> delete(@PathVariable(name = "partName") String partName){
     try{
       partService.delete(partName);
       return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

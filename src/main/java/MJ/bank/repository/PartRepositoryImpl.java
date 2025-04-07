@@ -3,6 +3,7 @@ package MJ.bank.repository;
 import MJ.bank.component.MakeSlice;
 import MJ.bank.dto.PartDto;
 import MJ.bank.dto.request.CursorPageRequest;
+import MJ.bank.entity.Part;
 import MJ.bank.entity.QPart;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,8 @@ public class PartRepositoryImpl implements PartRepositoryCustom{
   private final MakeSlice makeSlice;
 
   @Override
-  public Slice<PartDto> searchAll(CursorPageRequest request, Pageable pageable) {
-    return (Slice<PartDto>) makeSlice.findAll(request,pageable,part);
+  public Slice<Part> searchAll(CursorPageRequest request, Pageable pageable) {
+    return (Slice<Part>) makeSlice.findAll(request,pageable,part);
   }
 
 }
