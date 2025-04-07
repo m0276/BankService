@@ -13,6 +13,7 @@ import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,8 +35,8 @@ public class EmployeeController {
   private final EmployeeService employeeService;
   private final CursorService cursorService;
 
-  @PostMapping
-  public ResponseEntity<?> create(@RequestBody EmployeeCreateRequest createRequest, @RequestPart MultipartFile file){
+  @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+  public ResponseEntity<?> create(@RequestPart(name = "request") EmployeeCreateRequest createRequest, @RequestPart(name = "file",required = false) MultipartFile file){
     try{
       return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.create(createRequest,file));
     } catch (NullPointerException | EntityExistsException | NoSuchElementException e){

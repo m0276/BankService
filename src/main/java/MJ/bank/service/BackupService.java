@@ -58,11 +58,13 @@ public class BackupService {
           ResultSet rs = pstmt.executeQuery()) {
         if (rs.next()) {
           int currentRowCount = rs.getInt(1);
-          if (currentRowCount > previousRowCount) {
+          if(previousRowCount != null){
+            if (currentRowCount > previousRowCount) {
 
-            backupStorage.creatCSV("Backup" + backupFileNumber,"System", LocalDateTime.now(),
-                 BackupStatus.Processing);
+              backupStorage.creatCSV("Backup" + backupFileNumber,"System", LocalDateTime.now(),
+                  BackupStatus.Processing);
 
+            }
           }
           else{
 
@@ -84,13 +86,15 @@ public class BackupService {
           ResultSet rs = pstmt.executeQuery()) {
         if (rs.next()) {
           int currentRowCount = rs.getInt(1);
-          if (currentRowCount > previousRowCount) {
+          if(previousRowCount != null){
+            if (currentRowCount > previousRowCount) {
 
-            backupStorage.creatCSV("Backup" + backupFileNumber,InetAddress.getLocalHost().getHostAddress(), LocalDateTime.now(),
-                BackupStatus.Processing);
-            backupFileNumber += 1;
+              backupStorage.creatCSV("Backup" + backupFileNumber,InetAddress.getLocalHost().getHostAddress(), LocalDateTime.now(),
+                  BackupStatus.Processing);
+              backupFileNumber += 1;
+            }
+            previousRowCount = currentRowCount;
           }
-          previousRowCount = currentRowCount;
         }
       }
 

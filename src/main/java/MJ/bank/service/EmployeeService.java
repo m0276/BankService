@@ -10,6 +10,7 @@ import MJ.bank.dto.response.ErrorResponse;
 import MJ.bank.entity.Employee;
 import MJ.bank.entity.EmployeeStatus;
 import MJ.bank.entity.Part;
+import MJ.bank.entity.Profile;
 import MJ.bank.entity.Rank;
 import MJ.bank.entity.UpdateType;
 import MJ.bank.mapper.EmployeeMapper;
@@ -59,8 +60,9 @@ public class EmployeeService {
     Employee employee = new Employee(createRequest.getEmail(), createRequest.getName(),partService.findPart(
         createRequest.getPartName()) ,createRequest.getRank(),createRequest.getDateOfJoining());
 
-    ProfileDto profileDto = profileService.save(file);
+    Profile profileDto = profileService.save(file);
     if(profileDto == null) throw new RuntimeException();
+    employee.setProfile(profileDto);
     employeeRepository.save(employee);
     updateLogService.save(employee.getId(),"직원 추가" ,UpdateType.Add,"",createRequest, createRequest.getMemo());
 

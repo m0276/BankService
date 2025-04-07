@@ -26,7 +26,7 @@ public class ProfileService {
   private final ProfileStorage profileStorage;
   private final ProfileMapper mapper;
 
-  public ProfileDto save(MultipartFile file) {
+  public Profile save(MultipartFile file) {
 
     try{
       Profile profile = new Profile();
@@ -36,7 +36,7 @@ public class ProfileService {
 
       profileStorage.saveFile(profile,file.getBytes());
 
-      return mapper.toDto(profile);
+      return profile;
 
     } catch (IOException e){
      e.printStackTrace();

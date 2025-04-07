@@ -43,15 +43,13 @@ public class Employee {
   UUID employeeNumber = UUID.randomUUID();
 
   @Enumerated(EnumType.STRING)
-  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
-  @Column
+  @Column(name = "employee_rank")
   Rank rank;
 
   @Column(name = "date_of_joining")
   LocalDate dateOfJoining;
 
   @Enumerated(EnumType.STRING)
-  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column
   EmployeeStatus status = EmployeeStatus.Join;
 
