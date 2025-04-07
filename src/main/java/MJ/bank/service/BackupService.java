@@ -51,6 +51,8 @@ public class BackupService {
 
   @Scheduled(cron = "0 0 * * * *")
   public void backup(){
+    LocalDateTime start = LocalDateTime.now();
+    BackupStatus backupStatus = null;
     try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
       String query = "SELECT COUNT(*) FROM update_log";
 
@@ -62,24 +64,38 @@ public class BackupService {
             if (currentRowCount > previousRowCount) {
 
               backupStorage.creatCSV("Backup" + backupFileNumber,"System", LocalDateTime.now(),
-                  BackupStatus.Processing);
+                  BackupStatus.Complete);
+              backupStatus = BackupStatus.Complete;
 
             }
+            else{
+
+              backupStorage.creatCSV("Backup"+ backupFileNumber,"System", LocalDateTime.now(),
+                  BackupStatus.Skip);
+              backupStatus = BackupStatus.Skip;
+            }
+            previousRowCount = currentRowCount;
+
           }
           else{
-
-            backupStorage.creatCSV("Backup"+ backupFileNumber,"System", LocalDateTime.now(),
-                BackupStatus.Skip);
+            backupStorage.creatCSV("Backup" + backupFileNumber,"System", LocalDateTime.now(),
+                BackupStatus.Complete);
           }
-          previousRowCount = currentRowCount;
+
         }
       }
     } catch (Exception e) {
       e.printStackTrace();
+      backupStatus = BackupStatus.Fail;
     }
+    backupFileNumber += 1;
+    BackupLog backupLog = new BackupLog("system",start,LocalDateTime.now(),backupStatus,backupFileNumber);
+    backupLogRepository.save(backupLog);
   }
 
   public void create(){
+    LocalDateTime start = LocalDateTime.now();
+    BackupStatus backupStatus = null;
     try (Connection conn = DriverManager.getConnection(DB_URL, USER, PASS)) {
       String query = "SELECT COUNT(*) FROM update_log";
       try (PreparedStatement pstmt = conn.prepareStatement(query);
@@ -90,18 +106,32 @@ public class BackupService {
             if (currentRowCount > previousRowCount) {
 
               backupStorage.creatCSV("Backup" + backupFileNumber,InetAddress.getLocalHost().getHostAddress(), LocalDateTime.now(),
-                  BackupStatus.Processing);
-              backupFileNumber += 1;
+                  BackupStatus.Complete);
+              backupStatus = BackupStatus.Complete;
+            }
+            else{
+              backupStorage.creatCSV("Backup" + backupFileNumber,InetAddress.getLocalHost().getHostAddress(), LocalDateTime.now(),
+                  BackupStatus.Skip);
+              backupStatus = BackupStatus.Skip;
             }
             previousRowCount = currentRowCount;
           }
+          else{
+            backupStorage.creatCSV("Backup" + backupFileNumber,InetAddress.getLocalHost().getHostAddress(), LocalDateTime.now(),
+                BackupStatus.Complete);
+            backupStatus = BackupStatus.Complete;
+          }
         }
+        backupFileNumber += 1;
       }
 
     } catch (Exception e) {
       e.printStackTrace();
-
+      backupStatus = BackupStatus.Fail;
     }
+
+    BackupLog backupLog = new BackupLog("system",start,LocalDateTime.now(),backupStatus,backupFileNumber);
+    backupLogRepository.save(backupLog);
   }
 
   public LocalDateTime lastBackupTime(){

@@ -109,8 +109,7 @@ public class EmployeeService {
       updateLogService.save(employee.getId(),"입사일" ,UpdateType.Update,employee.getDateOfJoining(),updateRequest.getDateOfJoining(), updateRequest.getMemo());
       employee.setDateOfJoining(joining);
     }
-
-    profileService.update(id,file);
+    if(file != null) profileService.update(id,file);
     employeeRepository.save(employee);
 
     return employeeMapper.toDto(employee);

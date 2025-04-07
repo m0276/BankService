@@ -33,7 +33,6 @@ public class BackupLog {
   LocalDateTime endTime;
 
   @Enumerated(EnumType.STRING)
-  @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(name = "backup_status")
   BackupStatus backupStatus;
 

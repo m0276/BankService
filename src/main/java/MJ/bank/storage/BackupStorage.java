@@ -27,7 +27,7 @@ public class BackupStorage {
   private final BackupLogRepository backupLogRepository;
 
   public void creatCSV(String title,String worker, LocalDateTime start, BackupStatus backupStatus){
-    Long fileNumber = Long.parseLong(title.substring(5));
+    Long fileNumber = Long.parseLong(title.substring(6));
 
     try{
 

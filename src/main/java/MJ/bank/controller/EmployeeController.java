@@ -52,8 +52,8 @@ public class EmployeeController {
   }
 
   @PatchMapping(value = "/{id}",consumes = {"multipart/form-data"})
-  public ResponseEntity<?> update(@RequestPart(name = "request") EmployeeUpdateRequest updateRequest,@PathVariable Long id,
-  @RequestPart(required = false) MultipartFile file){
+  public ResponseEntity<?> update(@RequestPart(name = "request") EmployeeUpdateRequest updateRequest,@PathVariable(name = "id") Long id,
+  @RequestPart(name = "file",required = false) MultipartFile file){
     try {
       return ResponseEntity.status(HttpStatus.OK).body(employeeService.update(updateRequest,id,file));
     }
